@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notesapp.room.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     Context context;
-    List<Note> list;
+    List<Note> list=new ArrayList<>();
 
     public NoteAdapter(Context context) {
         this.context = context;

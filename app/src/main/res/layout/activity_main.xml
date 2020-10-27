@@ -10,14 +10,14 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:id="@+id/recycle"
         tools:listitem="@layout/note"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="70dp"/>
+        android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -27,8 +27,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="8dp"
-        app:rippleColor="@color/colorPrimaryDark"
-        app:maxImageSize="40dp"/>
+        android:src="@drawable/ic_baseline_add_24"
+        app:rippleColor="@color/colorPrimaryDark" />
 
 
 
