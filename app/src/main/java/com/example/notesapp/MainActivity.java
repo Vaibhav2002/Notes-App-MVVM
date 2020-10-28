@@ -1,10 +1,16 @@
 package com.example.notesapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notesapp.room.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -25,6 +32,21 @@ public class MainActivity extends AppCompatActivity {
     NoteAdapter noteAdapter;
     FloatingActionButton fab;
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = new MenuInflater(this);
+        menuInflater.inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.delAll)
+            showDialog();
+        return true;
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -64,6 +86,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+
+    void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Are you sure you want to delete all notes")
+                .setCancelable(true)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final List<Note> notes2 = noteViewModel.getAllNotes().getValue();
+                        noteViewModel.deleteAll();
+                        assert notes2 != null;
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.rellayout), "Undo", Snackbar.LENGTH_SHORT)
+                                .setAction("Undo", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        for (Note i : notes2)
+                                            noteViewModel.insert(i);
+                                    }
+                                });
+                        snackbar.show();
+                    }
+                })
+                .setNegativeButton("Cancel", null);
+        AlertDialog al = builder.create();
+        al.show();
     }
 
 }

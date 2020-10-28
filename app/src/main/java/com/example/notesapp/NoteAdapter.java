@@ -1,6 +1,7 @@
 package com.example.notesapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,8 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
-    Context context;
-    List<Note> list=new ArrayList<>();
+    public Context context;
+    public List<Note> list=new ArrayList<>();
 
     public NoteAdapter(Context context) {
         this.context = context;
@@ -32,7 +33,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-        Note n=list.get(position);
+        final Note n=list.get(position);
         holder.title.setText(n.getTitle());
         holder.descr.setText(n.getDescription());
     }
@@ -57,5 +58,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             title=itemView.findViewById(R.id.title);
             descr=itemView.findViewById(R.id.descr);
         }
+
     }
+
 }

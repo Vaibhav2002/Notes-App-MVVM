@@ -14,7 +14,7 @@
         android:id="@+id/recycle"
         tools:listitem="@layout/note"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-        app:spanCount="2"
+        app:spanCount="5"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="18dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="18dp"
         android:src="@drawable/ic_baseline_add_24"
         app:rippleColor="@color/colorPrimaryDark" />
 
