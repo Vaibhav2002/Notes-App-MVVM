@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,8 +25,17 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    //intent codes
+    public static final String EXTRA_TITLE = "Title";
+    public static final String EXTRA_DESCRIPTION = "Descr";
+    public static final String EXTRA_ID = "EXTRA_ID";
+    //intent codes
+    //request codes
     private static final int ADD_NOTE_CODE = 1;
+    private static final int EDIT_NOTE_CODE = 2;
+    private static final int DELETE_CODE = 3;
+    private static final int DELETE_ALL_CODE = 4;
+    //request codes
 
     NoteViewModel noteViewModel;
     RecyclerView recyclerView;
@@ -43,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.delAll)
-            showDialog();
+            showDialog(getString(R.string.DeleteAllTitle), getString(R.string.DeleteAllMessage), DELETE_ALL_CODE, null);
         return true;
 
     }
@@ -52,9 +62,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_NOTE_CODE && resultCode == AddEditNote.RESULT_OK) {
-            String title = data.getStringExtra("Title").trim();
-            String description = data.getStringExtra("Descr").trim();
+            String title = data.getStringExtra(EXTRA_TITLE).trim();
+            String description = data.getStringExtra(EXTRA_DESCRIPTION).trim();
             noteViewModel.insert(new Note(title, description));
+            Toast.makeText(this, "Toast saved", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == EDIT_NOTE_CODE && resultCode == AddEditNote.RESULT_OK) {
+            String title = data.getStringExtra(EXTRA_TITLE).trim();
+            String description = data.getStringExtra(EXTRA_DESCRIPTION).trim();
+            int id = data.getIntExtra(EXTRA_ID, -1);
+            Note n = new Note(title, description);
+            n.setId(id);
+            noteViewModel.update(n);
+            Toast.makeText(this, "Toast saved", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Cannot save note", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -86,34 +107,70 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        noteAdapter.setOnItemClickListener(new NoteAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(Note note) {
+                Intent intent = new Intent(MainActivity.this, AddEditNote.class);
+                intent.putExtra(EXTRA_TITLE, note.getTitle());
+                intent.putExtra(EXTRA_DESCRIPTION, note.getDescription());
+                intent.putExtra(EXTRA_ID, note.getId());
+                startActivityForResult(intent, EDIT_NOTE_CODE);
+            }
+        });
+        noteAdapter.setOnItemLongClickListener(new NoteAdapter.onItemLongCLickListener() {
+            @Override
+            public void onItemLongClick(Note note) {
+                showDialog(getString(R.string.DeleteTitle), getString(R.string.DeleteMessage), DELETE_CODE, note);
+            }
+        });
+
     }
 
 
-    void showDialog() {
+    void showDialog(String title, String Message, final int request, final Note note) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Delete")
-                .setMessage("Are you sure you want to delete all notes")
+                .setTitle(title)
+                .setMessage(Message)
                 .setCancelable(true)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final List<Note> notes2 = noteViewModel.getAllNotes().getValue();
-                        noteViewModel.deleteAll();
-                        assert notes2 != null;
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.rellayout), "Undo", Snackbar.LENGTH_SHORT)
-                                .setAction("Undo", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        for (Note i : notes2)
-                                            noteViewModel.insert(i);
-                                    }
-                                });
-                        snackbar.show();
+                        if (request == DELETE_ALL_CODE)
+                            deleteAll();
+                        else
+                            delete(note);
                     }
                 })
                 .setNegativeButton("Cancel", null);
         AlertDialog al = builder.create();
         al.show();
+    }
+
+    void deleteAll() {
+        final List<Note> notes2 = noteViewModel.getAllNotes().getValue();
+        noteViewModel.deleteAll();
+        assert notes2 != null;
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.rellayout), "Undo", Snackbar.LENGTH_SHORT)
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for (Note i : notes2)
+                            noteViewModel.insert(i);
+                    }
+                });
+        snackbar.show();
+    }
+
+    void delete(final Note note) {
+        noteViewModel.delete(note);
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.rellayout), "Undo", Snackbar.LENGTH_SHORT)
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        noteViewModel.insert(note);
+                    }
+                });
+        snackbar.show();
     }
 
 }
