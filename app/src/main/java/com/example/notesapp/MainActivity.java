@@ -13,17 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notesapp.databinding.ActivityMainBinding;
 import com.example.notesapp.room.Note;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    ActivityMainBinding activityMainBinding;
 
     //intent codes
     public static final String EXTRA_TITLE = "Title";
@@ -38,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
     //request codes
 
     NoteViewModel noteViewModel;
-    RecyclerView recyclerView;
     NoteAdapter noteAdapter;
-    FloatingActionButton fab;
 
 
     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             Note n = new Note(title, description);
             n.setId(id);
             noteViewModel.update(n);
-            Toast.makeText(this, "Toast saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Cannot save note", Toast.LENGTH_SHORT).show();
         }
@@ -82,14 +82,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        //initialization
-        recyclerView = findViewById(R.id.recycle);
-        fab = findViewById(R.id.fab);
-        //initialization
+        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        activityMainBinding.setLifecycleOwner(this);
         noteAdapter = new NoteAdapter(this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(noteAdapter);
+        activityMainBinding.recycle.setHasFixedSize(true);
+        activityMainBinding.recycle.setAdapter(noteAdapter);
         noteViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(NoteViewModel.class);
         noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
@@ -98,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 noteAdapter.setList(notes);
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
+        activityMainBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddEditNote.class);

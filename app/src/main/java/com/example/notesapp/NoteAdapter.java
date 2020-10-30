@@ -4,11 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notesapp.databinding.NoteBinding;
 import com.example.notesapp.room.Note;
 
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     public onItemClickListener listener;
     public onItemLongCLickListener longCLickListener;
 
+
     public NoteAdapter(Context context) {
         this.context = context;
     }
@@ -28,15 +29,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.note, parent, false);
-        return new NoteViewHolder(view);
+        NoteBinding noteBinding = NoteBinding.inflate(LayoutInflater.from(context), parent, false);
+        return new NoteViewHolder(noteBinding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         final Note n = list.get(position);
-        holder.title.setText(n.getTitle());
-        holder.descr.setText(n.getDescription());
+        holder.noteBinding.setNote(list.get(position));
     }
 
     void setList(List<Note> list) {
@@ -66,13 +66,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
+        NoteBinding noteBinding;
 
-        TextView title, descr;
-
-        public NoteViewHolder(@NonNull View itemView) {
-            super(itemView);
-            title = itemView.findViewById(R.id.title);
-            descr = itemView.findViewById(R.id.descr);
+        public NoteViewHolder(@NonNull NoteBinding noteBinding) {
+            super(noteBinding.getRoot());
+            this.noteBinding = noteBinding;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
