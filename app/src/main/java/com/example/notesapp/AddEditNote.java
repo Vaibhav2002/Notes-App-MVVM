@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil;
 
 import com.example.notesapp.databinding.ActivityAddEditNoteBinding;
 
+import java.util.Objects;
+
 public class AddEditNote extends AppCompatActivity {
     ActivityAddEditNoteBinding activityAddEditNoteBinding;
     public static final int RESULT_OK = 1;
@@ -53,8 +55,8 @@ public class AddEditNote extends AppCompatActivity {
     }
 
     private void saveNote() {
-        String titletext = activityAddEditNoteBinding.titleinput.getText().toString().trim();
-        String descriptiontext = activityAddEditNoteBinding.descriptioninput.getText().toString().trim();
+        String titletext = Objects.requireNonNull(activityAddEditNoteBinding.titleinput.getText()).toString().trim();
+        String descriptiontext = Objects.requireNonNull(activityAddEditNoteBinding.descriptioninput.getText()).toString().trim();
         if (validate(titletext, descriptiontext)) {
             Intent intent = new Intent(AddEditNote.this, MainActivity.class);
             intent.putExtra(MainActivity.EXTRA_TITLE, titletext);

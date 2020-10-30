@@ -22,6 +22,7 @@ import com.example.notesapp.room.Note;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,13 +63,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_NOTE_CODE && resultCode == AddEditNote.RESULT_OK) {
-            String title = data.getStringExtra(EXTRA_TITLE).trim();
-            String description = data.getStringExtra(EXTRA_DESCRIPTION).trim();
+            assert data != null;
+            String title = Objects.requireNonNull(data.getStringExtra(EXTRA_TITLE)).trim();
+            String description = Objects.requireNonNull(data.getStringExtra(EXTRA_DESCRIPTION)).trim();
             noteViewModel.insert(new Note(title, description));
             Toast.makeText(this, "Toast saved", Toast.LENGTH_SHORT).show();
         } else if (requestCode == EDIT_NOTE_CODE && resultCode == AddEditNote.RESULT_OK) {
-            String title = data.getStringExtra(EXTRA_TITLE).trim();
-            String description = data.getStringExtra(EXTRA_DESCRIPTION).trim();
+            String title = Objects.requireNonNull(Objects.requireNonNull(data).getStringExtra(EXTRA_TITLE)).trim();
+            String description = Objects.requireNonNull(data.getStringExtra(EXTRA_DESCRIPTION)).trim();
             int id = data.getIntExtra(EXTRA_ID, -1);
             Note n = new Note(title, description);
             n.setId(id);

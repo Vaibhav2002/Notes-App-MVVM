@@ -35,7 +35,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-        final Note n = list.get(position);
         holder.noteBinding.setNote(list.get(position));
     }
 
